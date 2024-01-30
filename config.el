@@ -139,7 +139,6 @@
 (use-package! forge
   :after magit
   :config
-
   (setq
         forge-alist
         '(("gitlab.ictrek.local" "gitlab.ictrek.local/api/v4" "gitlab.ictrek.local" forge-gitlab-repository)
@@ -147,7 +146,7 @@
         ("gitlab.com" "gitlab.com/api/v4" "gitlab.com" forge-gitlab-repository))
         )
   (setq auth-sources '("~/.authinfo"))
+  (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api/v4"))
 
 
-  (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api/v4")
-  )
+(use-package! org-media-note)

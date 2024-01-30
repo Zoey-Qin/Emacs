@@ -58,3 +58,4 @@
 (package! jenkinsfile-mode)
 
 (package! jupyter)
+(package! org-media-note :recipe (:host github :repo "yuchen-lea/org-media-note"))
