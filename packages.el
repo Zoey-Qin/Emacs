@@ -49,7 +49,8 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 (unpin! apheleia)
-(unpin! forge)
+;; (unpin! forge)
+(unpin! org-roam)
 
 (package! rime)
 (package! org-roam-ui)
