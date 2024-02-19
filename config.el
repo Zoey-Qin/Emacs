@@ -150,3 +150,6 @@
 
 
 (use-package! org-media-note)
+
+;; files
+(load! "elisp/hy")
