@@ -64,3 +64,5 @@
 (package! crdt)
 
 (package! emacs-everywhere :pin "44775589ad050134adf433885be0a94398055630")
+
+(package! ellama)

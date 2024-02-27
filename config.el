@@ -159,3 +159,16 @@
  "C-c C-c" #'emacs-everywhere--finish-or-ctrl-c-ctrl-c)
 
 (add-hook 'python-mode-hook #'(lambda () (setq flycheck-checker 'python-pylint)))
+
+(use-package! ellama
+  :init
+  (setopt ellama-language "English")
+  (setopt ellama-keymap-prefix "C-c e")
+  (require 'llm-ollama)
+  (setopt ellama-ollama-binary "/ssh:work:/usr/bin/ollama")
+  (setq ellama-provider
+        (make-llm-ollama
+         :host "192.168.100.132"
+         :port 11434
+         :chat-model "zephyr"
+         :embedding-model "zephyr")))
