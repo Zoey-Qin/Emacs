@@ -158,7 +158,18 @@
  :map emacs-everywhere-mode-map
  "C-c C-c" #'emacs-everywhere--finish-or-ctrl-c-ctrl-c)
 
-(add-hook 'python-mode-hook #'(lambda () (setq flycheck-checker 'python-pylint)))
+(defvar-local my/flycheck-local-cache nil)
+
+(defun my/flycheck-checker-get (fn checker property)
+  (or (alist-get property (alist-get checker my/flycheck-local-cache))
+      (funcall fn checker property)))
+
+(advice-add 'flycheck-checker-get :around 'my/flycheck-checker-get)
+
+(add-hook 'lsp-managed-mode-hook
+          (lambda ()
+            (when (derived-mode-p 'python-mode)
+              (setq my/flycheck-local-cache '((lsp . ((next-checkers . (python-pylint)))))))))
 
 (use-package! ellama
   :init
