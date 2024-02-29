@@ -153,6 +153,7 @@
 
 ;; files
 (load! "elisp/hy")
+(load! "elisp/wd")
 
 (map!
  :map emacs-everywhere-mode-map
