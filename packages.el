@@ -48,23 +48,16 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
-(unpin! apheleia)
-;; (unpin! forge)
-(unpin! org-roam)
-
 (package! rime)
 (package! org-roam-ui)
 
 (package! groovy-mode)
 (package! jenkinsfile-mode)
 
-(package! jupyter)
-(package! org-media-note :recipe (:host github :repo "yuchen-lea/org-media-note"))
-
 (package! crdt)
-
-(package! emacs-everywhere :pin "44775589ad050134adf433885be0a94398055630")
 
 (package! ellama)
 
 (package! ef-themes)
+(package! anki-editor :recipe (:host github :repo "orgtre/anki-editor"))
+(unpin! doom-modeline)

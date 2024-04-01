@@ -151,7 +151,7 @@
   (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api/v4"))
 
 
-(use-package! org-media-note)
+;;(use-package! org-media-note)
 
 ;; files
 (load! "elisp/hy")
