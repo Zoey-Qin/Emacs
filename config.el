@@ -80,8 +80,10 @@
 (use-package! rime
   :custom
   (default-input-method "rime")
+  :bind
+  (:map rime-mode-map
+        ("C-`" . 'rime-send-keybinding))
   :config
-  (define-key rime-mode-map (kbd "C-i") 'rime-force-enable)
   (setq rime-show-candidate 'posframe)
   (setq rime-disable-predicates
         '(rime-predicate-evil-mode-p
