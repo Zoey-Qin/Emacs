@@ -148,8 +148,11 @@
         ("gitlab.com" "gitlab.com/api/v4" "gitlab.com" forge-gitlab-repository))
         )
   (setq auth-sources '("~/.authinfo"))
-  (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api/v4"))
+  (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api/v4")
+  (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api")
+  (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local"))
 
+(setq code-review-auth-login-marker 'forge)
 
 ;;(use-package! org-media-note)
 
