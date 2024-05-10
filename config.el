@@ -153,7 +153,15 @@
   (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local/api")
   (add-to-list 'ghub-insecure-hosts "gitlab.ictrek.local"))
 
-(setq code-review-auth-login-marker 'forge)
+(use-package! code-review
+  :after forge
+  :config
+  (setq code-review-auth-login-marker 'forge)
+  (setq code-review-gitlab-base-url "gitlab.ictrek.local")
+  (setq code-review-gitlab-host "gitlab.ictrek.local/api")
+  (setq code-review-gitlab-graphql-host "gitlab.ictrek.local/api")
+  :bind
+  (:map forge-pullreq-section-map ("C-c r" . +magit/start-code-review)))
 
 ;;(use-package! org-media-note)
 
