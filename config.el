@@ -128,6 +128,7 @@
 
 (add-hook 'python-mode-hook  #'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'scheme-mode-hook #'rainbow-delimiters-mode)
 
 (use-package! paredit
   :after (clojure-mode)
