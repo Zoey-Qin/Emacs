@@ -62,3 +62,5 @@
 (package! ef-themes)
 (package! anki-editor :recipe (:host github :repo "orgtre/anki-editor"))
 (unpin! doom-modeline)
+
+(package! ement)

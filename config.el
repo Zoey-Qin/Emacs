@@ -189,3 +189,19 @@
          :port 11434
          :chat-model "zephyr"
          :embedding-model "zephyr")))
+
+
+
+(setq ement-save-sessions t
+      ement-room-message-format-spec "%B%r%R%t")
+(map! :map ement-room-mode-map
+      :n "c e" #'ement-room-edit-message
+      :n "c m" #'ement-room-send-message
+      :n "c r" #'ement-room-send-reaction
+      :n "c i" #'ement-room-send-image
+      :n "c f" #'ement-room-send-file
+      :n "q"   #'kill-current-buffer
+      )
+(map! :map ement-room-list-mode-map
+      :n "RET" #'ement-room-list-RET
+      :n "q"   #'kill-current-buffer)
