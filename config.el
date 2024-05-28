@@ -214,3 +214,8 @@
 (map! :map ement-room-list-mode-map
       :n "RET" #'ement-room-list-RET
       :n "q"   #'kill-current-buffer)
+
+(use-package! lsp-scheme
+  :init
+  (add-hook 'scheme-mode-hook #'lsp-scheme)
+  (setq lsp-scheme-implementation "guile"))

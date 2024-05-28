@@ -64,3 +64,5 @@
 (unpin! doom-modeline)
 
 (package! ement)
+
+(package! lsp-scheme)
