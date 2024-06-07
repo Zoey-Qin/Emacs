@@ -184,7 +184,7 @@
 (add-hook 'lsp-managed-mode-hook
           (lambda ()
             (when (derived-mode-p 'python-mode)
-              (setq my/flycheck-local-cache '((lsp . ((next-checkers . (python-pylint)))))))))
+              (setq my/flycheck-local-cache '((lsp . ((next-checkers . (python-flake8)))))))))
 
 (use-package! ellama
   :init
