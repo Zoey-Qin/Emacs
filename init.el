@@ -164,7 +164,6 @@
        plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python
-        +poetry
         +lsp
         +pyright
         +tree-sitter)            ; beautiful is better than ugly

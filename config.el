@@ -183,7 +183,8 @@
 
 (add-hook 'lsp-managed-mode-hook
           (lambda ()
-            (when (derived-mode-p 'python-mode)
+            (when (and (string= nil (file-remote-p default-directory))
+                       (derived-mode-p 'python-mode))
               (setq my/flycheck-local-cache '((lsp . ((next-checkers . (python-flake8)))))))))
 
 (use-package! ellama
@@ -256,3 +257,30 @@
   (setq dap-python-debugger 'debugpy)
   (defun dap-python--pyenv-executable-find (command)
     (executable-find command)))
+
+(setq! python-shell-remote-exec-path '("/opt/vision-storage/bin"))
+
+(defun my/track-python-virtualenv ()
+  (interactive)
+  (if (string= nil (file-remote-p default-directory))
+      (when-let* ((poetry-exist? (executable-find "poetry"))
+                  (poetry-project? (locate-dominating-file default-directory "pyproject.toml"))
+                  (poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
+        (pyvenv-activate poetry-venv-path))
+    (message "open remote python file"))
+  )
+
+(advice-add 'switch-to-buffer
+            :after
+            (lambda (&rest _args)
+              (when buffer-file-name (my/track-python-virtualenv)))
+            '((name . "poetry-tracking-on-buffer-switch")))
+
+(advice-add 'windmove-do-window-select
+            :after
+            (lambda (&rest _args)
+              (when buffer-file-name (my/track-python-virtualenv)))
+            '((name . "poetry-tracking-on-window-selection")))
+
+(add-hook 'python-mode-hook 'my/track-python-virtualenv)
+(add-hook 'find-file-hook 'my/track-python-virtualenv)
