@@ -48,7 +48,7 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
-(unpin! forge)
+(package! forge :pin "8ab77ca4671d8a7f373f3b829ef94bacaee21b3a")
 (package! rime)
 (package! org-roam-ui)
 
@@ -61,7 +61,6 @@
 
 (package! ef-themes)
 (package! anki-editor :recipe (:host github :repo "orgtre/anki-editor"))
-(unpin! doom-modeline)
 
 (package! ement)
 
