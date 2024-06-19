@@ -260,15 +260,28 @@
 
 (setq! python-shell-remote-exec-path '("/opt/vision-storage/bin"))
 
+(defvar poetry-venv-list '()
+  "List of known poetry virtualenvs.")
+
+(defvar poetry-saved-venv nil
+  "Virtualenv activated before changed it.
+Allow to re-enable the previous virtualenv when leaving the poetry project.")
+
 (defun my/track-python-virtualenv ()
   (interactive)
   (if (string= nil (file-remote-p default-directory))
-      (when-let* ((poetry-exist? (executable-find "poetry"))
-                  (poetry-project? (locate-dominating-file default-directory "pyproject.toml"))
-                  (poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
-        (pyvenv-activate poetry-venv-path))
-    (message "open remote python file"))
-  )
+      (if-let ((poetry-project-path (locate-dominating-file default-directory "pyproject.toml")))
+          (let ((poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
+            (if (member poetry-project-path poetry-venv-list)
+                 (if (equal poetry-saved-venv poetry-venv-path)
+                     (setq poetry-saved-venv poetry-venv-path)
+                   (pyvenv-activate poetry-venv-path)
+                   (setq poetry-saved-venv poetry-venv-path))
+               (add-to-list 'poetry-venv-list poetry-project-path)
+               (pyvenv-activate poetry-venv-path)))
+        (pyvenv-deactivate)
+        (setq poetry-saved-venv nil))
+    (message "open remote python file")))
 
 (advice-add 'switch-to-buffer
             :after
