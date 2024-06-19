@@ -267,33 +267,21 @@
   "Virtualenv activated before changed it.
 Allow to re-enable the previous virtualenv when leaving the poetry project.")
 
-(defun my/track-python-virtualenv ()
+(defun my/track-python-virtualenv (&optional _)
   (interactive)
-  (if (string= nil (file-remote-p default-directory))
-      (if-let ((poetry-project-path (locate-dominating-file default-directory "pyproject.toml")))
-          (let ((poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
+  (when buffer-file-name
+    (if (string= nil (file-remote-p default-directory))
+        (if-let ((poetry-project-path (locate-dominating-file default-directory "pyproject.toml"))
+                 (poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
             (if (member poetry-project-path poetry-venv-list)
-                 (if (equal poetry-saved-venv poetry-venv-path)
-                     (setq poetry-saved-venv poetry-venv-path)
-                   (pyvenv-activate poetry-venv-path)
-                   (setq poetry-saved-venv poetry-venv-path))
-               (add-to-list 'poetry-venv-list poetry-project-path)
-               (pyvenv-activate poetry-venv-path)))
-        (pyvenv-deactivate)
-        (setq poetry-saved-venv nil))
-    (message "open remote python file")))
+                (when (not (equal poetry-saved-venv poetry-venv-path))
+                  (pyvenv-activate poetry-venv-path)
+                  (setq poetry-saved-venv poetry-venv-path))
+              (add-to-list 'poetry-venv-list poetry-project-path)
+              (pyvenv-activate poetry-venv-path))
+          (pyvenv-deactivate)
+          (setq poetry-saved-venv nil))
+      (message "open remote python file"))))
 
-(advice-add 'switch-to-buffer
-            :after
-            (lambda (&rest _args)
-              (when buffer-file-name (my/track-python-virtualenv)))
-            '((name . "poetry-tracking-on-buffer-switch")))
-
-(advice-add 'windmove-do-window-select
-            :after
-            (lambda (&rest _args)
-              (when buffer-file-name (my/track-python-virtualenv)))
-            '((name . "poetry-tracking-on-window-selection")))
-
+(add-to-list 'window-buffer-change-functions 'my/track-python-virtualenv)
 (add-hook 'python-mode-hook 'my/track-python-virtualenv)
-(add-hook 'find-file-hook 'my/track-python-virtualenv)
