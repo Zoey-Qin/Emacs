@@ -277,3 +277,13 @@ Allow to re-enable the previous virtualenv when leaving the poetry project.")
 
 (add-to-list 'window-buffer-change-functions 'my/track-python-virtualenv)
 (add-hook 'python-mode-hook 'my/track-python-virtualenv)
+
+
+(defun my/run-python-unittest ()
+  (interactive)
+  (async-shell-command "python3 -m unittest -v" "*Messages*"))
+
+(map! :map python-mode-map
+      :leader
+      :prefix ("mt" . "test")
+      :desc "run unittest"          "u" #'my/run-python-unittest)
