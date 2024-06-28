@@ -1,15 +1,4 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
+;;; $DOOMDIR/config.el -*- lexical-binding: tnts in Doom:
 ;;
 ;; - `doom-font' -- the primary font to use
 ;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
@@ -272,16 +261,19 @@ Allow to re-enable the previous virtualenv when leaving the poetry project.")
   (interactive)
   (when (and buffer-file-name
              (string= nil (file-remote-p default-directory)))
-    (if-let ((poetry-project-path (locate-dominating-file default-directory "pyproject.toml"))
-             (poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
-        (if (member poetry-project-path poetry-venv-list)
-            (when (not (equal poetry-saved-venv poetry-venv-path))
-              (pyvenv-activate poetry-venv-path)
-              (setq poetry-saved-venv poetry-venv-path))
-          (add-to-list 'poetry-venv-list poetry-project-path)
-          (pyvenv-activate poetry-venv-path))
-      (pyvenv-deactivate)
-      (setq poetry-saved-venv nil))))
+    (cond ((locate-dominating-file default-directory "pyproject.toml")
+            (when (not (equal poetry-saved-venv (locate-dominating-file default-directory "pyproject.toml")))
+              (let ((poetry-project-path (locate-dominating-file default-directory "pyproject.toml"))
+                    (poetry-venv-path (s-trim (shell-command-to-string "env -u VIRTUAL_ENV poetry env info -p"))))
+                (if (member poetry-project-path poetry-venv-list)
+                    (when (not (equal poetry-saved-venv poetry-project-path))
+                      (pyvenv-activate poetry-venv-path)
+                      (setq poetry-saved-venv poetry-project-path))
+                  (add-to-list 'poetry-venv-list poetry-project-path)))))
+           ((locate-dominating-file default-directory ".venv")
+            (pyvenv-activate (concat  (locate-dominating-file default-directory ".venv") ".venv"))
+            (setq poetry-saved-venv nil))
+           (t (pyvenv-deactivate)))))
 
 (add-to-list 'window-buffer-change-functions 'my/track-python-virtualenv)
 (add-hook 'python-mode-hook 'my/track-python-virtualenv)
