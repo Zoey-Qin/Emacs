@@ -48,7 +48,7 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
-(package! forge :pin "8ab77ca4671d8a7f373f3b829ef94bacaee21b3a")
+(unpin! forge)
 (package! rime)
 (package! org-roam-ui)
 
