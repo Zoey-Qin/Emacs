@@ -10,9 +10,10 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
+;;(setq doom-font (font-spec :family "Fira Code" :size 20 :weight 'semi-light)
+;;     doom-variable-pitch-font (font-spec :family "Fira Sans" :size 18))
+(setq doom-font (font-spec :size 20))
+
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -21,7 +22,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'ef-duo-dark)
+(setq doom-theme 'ef-elea-dark)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -285,3 +286,5 @@ Allow to re-enable the previous virtualenv when leaving the poetry project.")
       :leader
       :prefix ("mt" . "test")
       :desc "run unittest"          "u" #'my/run-python-unittest)
+
+(add-hook 'window-setup-hook #'toggle-frame-fullscreen)
