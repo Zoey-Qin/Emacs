@@ -22,7 +22,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'ef-elea-dark)
+;;(setq doom-theme 'dichromacy)
+(setq doom-theme 'ef-light)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -65,7 +66,7 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
-(setq org-roam-directory "~/Nextcloud/org-roam")
+(setq org-roam-directory "~/Nextcloud/org-roam/daily/2024")
 
 (use-package! rime
   :custom
@@ -119,6 +120,7 @@
 (add-hook 'python-mode-hook  #'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'scheme-mode-hook #'rainbow-delimiters-mode)
+;; (add-hook 'org-mode-hook #'rainbow-delimiters-mode)
 
 (use-package! paredit
   :after (clojure-mode)
@@ -207,11 +209,6 @@
       :n "RET" #'ement-room-list-RET
       :n "q"   #'kill-current-buffer)
 
-(use-package! lsp-scheme
-  :init
-  (add-hook 'scheme-mode-hook #'lsp-scheme)
-  (setq lsp-scheme-implementation "guile"))
-
 (map! :map dap-mode-map
       :leader
       :prefix ("d" . "dap")
@@ -287,4 +284,98 @@ Allow to re-enable the previous virtualenv when leaving the poetry project.")
       :prefix ("mt" . "test")
       :desc "run unittest"          "u" #'my/run-python-unittest)
 
-(add-hook 'window-setup-hook #'toggle-frame-fullscreen)
+;;(add-hook 'window-setup-hook #'toggle-frame-fullscreen)
+
+
+;(defun save-with-title ()
+;;   "Save the current buffer with the name taken from the #+TITLE: property in the document.
+;;    Keep the original date prefix in the file name."
+;;   (interactive)
+;;   (when (eq major-mode 'org-mode)
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (if (re-search-forward "^#\\+TITLE: \\(.*\\)$" nil t)
+;;           (let ((title (match-string 1)))
+;;             (let* ((date-prefix (file-name-base buffer-file-name))
+;;                    (new-file-name (concat (file-name-directory buffer-file-name)
+;;                                           date-prefix "-" title ".org")))
+;;               (unless (string-equal buffer-file-name new-file-name)
+;;                 (rename-file buffer-file-name new-file-name 1)
+;;                 (set-visited-file-name new-file-name t t)
+;;                 (message "File renamed to %s" new-file-name))))))))
+
+;; ;; Add the function to the `before-save-hook` for org-mode
+;; (add-hook 'org-mode-hook
+;;           (lambda ()
+;;             (add-hook 'before-save-hook 'save-with-title nil t)))
+
+
+
+(defun my/org-roam-garden-dashboard--build-item (node)
+  (concat "\n** " (org-roam-node-title node) "\n[[" (org-roam-node-file node) "]]"))
+
+(defun my/org-roam-garden-dashboard ()
+  (interactive)
+  (with-current-buffer (get-buffer-create "*Garden*")
+    (erase-buffer)
+    (let ((node-list (org-roam-node-list)))
+      (insert "* 🌱 seedling")
+      (insert (string-join (mapcar #'my/org-roam-garden-dashboard--build-item
+                                   node-list))))
+    (org-mode)
+    (switch-to-buffer (current-buffer))))
+
+
+
+(use-package kubernetes)
+(use-package kubernetes-evil
+  :ensure t
+  :after kubernetes)
+(use-package poke-line
+  :ensure t)
+
+(defun my/kubernetes-buff-yaml-highlight ()
+  (require 'yaml-mode)
+  (setq font-lock-defaults '(yaml-font-lock-keywords))
+  (font-lock-update))
+
+(add-hook 'kubernetes-mode-hook #'my/kubernetes-buff-yaml-highlight)
+
+
+(defvar aaii-code-session nil)
+
+(defun aaii-region-request (beg end)
+  (interactive "r")
+  (unless aaii-code-session
+    (let ((session-uuid (uuidgen-4)))
+      (message (concat "Build new session " session-uuid))
+      (setq aaii-code-session session-uuid)
+      (request
+        "https://aaii.southfox.gay/abcfox/generate_session"
+        :type "POST"
+        :headers '(("Content-Type" . "application/json"))
+        :data (json-encode `(("session_uuid" . ,session-uuid)
+                             ("model" . "gemini-1.5-pro")))
+        :error (cl-function
+                  (lambda (&key data &allow-other-keys)
+                    (message "Build new session error.")
+                    (setq aaii-code-session nil)))
+        :sync t)))
+
+  (let ((prompt (concat "解释下面这段代码，并使用 markdown 格式化输出：\n" (buffer-substring-no-properties beg end))))
+    (with-current-buffer (get-buffer-create "*AAII*")
+      (goto-char (point-min))
+      (insert (concat "# 询问\n" prompt "\n")))
+    (request
+      "https://aaii.southfox.gay/abcfox/generate_text_stream"
+      :type "POST"
+      :headers '(("Content-Type" . "application/json"))
+      :data (json-encode `(("session_uuid" . ,aaii-code-session) ("prompt" . ,prompt)))
+      :success (cl-function
+                (lambda (&key data &allow-other-keys)
+                  (with-current-buffer (get-buffer-create "*AAII*")
+                    (goto-char (point-min))
+                    (insert (concat "# AAII 回答\n" data "\n"))
+                    (switch-to-buffer-other-window (current-buffer))
+                    (markdown-mode)
+                    (goto-char (point-min))))))))

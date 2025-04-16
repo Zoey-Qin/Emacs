@@ -48,6 +48,7 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
+(unpin! rustic)
 (unpin! forge)
 (package! rime)
 (package! org-roam-ui)
@@ -65,3 +66,8 @@
 (package! ement)
 
 (package! lsp-scheme)
+
+(package! kubernetes)
+(package! kubernetes-evil)
+
+(package! poke-line)
